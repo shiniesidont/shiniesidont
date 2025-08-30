@@ -1,5 +1,6 @@
 import os
 import discord
+import asyncio
 from flask import Flask
 from threading import Thread
 
@@ -35,16 +36,21 @@ async def on_message(message):
     # Only respond to messages from app ID 854233015475109888
     if message.author.id != 854233015475109888:
         return
-
+    
     content = message.content.strip()
-
+    
     for trigger in poke_triggers:
         if content.startswith(trigger):
             try:
                 poke_name = trigger.replace(":", "")
                 response = f"{response_prefix}{poke_name}"
+                
+                # Wait 3 seconds before sending the response
+                print(f"⏳ Collection detected: {poke_name}. Waiting 3 seconds...")
+                await asyncio.sleep(3)
+                
                 await message.channel.send(response)
-                print(f"✅ Sent: {response}")
+                print(f"✅ Sent after delay: {response}")
             except Exception as e:
                 print(f"❌ Error sending response for {poke_name}: {e}")
             break
